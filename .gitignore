@@ -1,6 +1,7 @@
-.musicxml
-.mxl
-.mid
+*.musicxml
+*.mxl
+*.mid
+*.nxc
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,vim,linux
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,visualstudiocode,vim,linux
