@@ -6,6 +6,7 @@ import sys
 
 from lengthhelper import get_length_list
 from printhelper import create_line
+from find_tempo import get_relevant_events
 
 def main():
     _, input_path, output_path = sys.argv
@@ -20,6 +21,11 @@ def main():
         'P1': 'RIGHT',
     }
 
+    DEVICE_DEFAULTS = {
+        'P1': ('F1', 0.5, True),
+        'P2': ('G1', 0.5, True),
+    }
+
     print('Collecting Metadata')
     part_list = dom.getElementsByTagName('part-list')[0]
     part_ids = [el.getAttribute('id') for el in part_list.getElementsByTagName('score-part')]
@@ -29,6 +35,8 @@ def main():
     parts = {part.getAttribute('id'):part for part in parts}
 
     hit_dict = defaultdict(dict)
+    tempo_dict = {}
+    end_time = 0
 
     for part_id, part in parts.items():
         print(part_id)
@@ -39,11 +47,15 @@ def main():
 
         print('Divisions', divisions)
 
-        notes = part.getElementsByTagName('note')
+        events = get_relevant_events(part)
 
         current_count = 0
 
-        for note in notes:
+        for note in events:
+            if note.tagName == 'sound':
+                tempo_dict[current_count] = int(note.getAttribute('tempo'))
+                continue
+
             if note.getElementsByTagName('rest'):
                 duration = note.getElementsByTagName('duration')[0].firstChild.nodeValue
                 duration = int(duration)
@@ -87,23 +99,38 @@ def main():
             current_count += note_length
 
         hit_dict[current_count][part_id] = 'END'
-        end_time = current_count
+        end_time = max(current_count, end_time)
 
+    end_time += 1
+    hit_dict[end_time] = DEVICE_DEFAULTS
     hit_dict = dict(hit_dict)
+    
     print(hit_dict)
+    print(tempo_dict)
+
+    tempo_points = list(tempo_dict.keys())
 
     lines = []
+
+    if 0 in tempo_dict:
+        tempo_ms_32th = 60000 // (tempo_dict[0] * 8)
+        lines.append(create_line('TEMPO', None, 'MS_32TH', tempo_ms_32th))
 
     time_stamps = sorted(hit_dict.keys())
 
     for i, start in enumerate(time_stamps):
-        print(start)
 
         hit = hit_dict[start]
 
-        print(hit)
         end = time_stamps[i+1]
         duration = end - start
+
+        new_tempo_bpm = None
+        for p in tempo_points:
+            if (start < p and end >= p):
+                new_tempo_bpm = tempo_dict[p]
+                print('After ', start, 'Tempo is ', new_tempo_bpm)
+                break
 
         length_tag, *additional_rests = get_length_list(duration)
         mallets = list(hit.keys())
@@ -142,6 +169,10 @@ def main():
 
         for rest in additional_rests:
                 lines.append(create_line(second_device[0], "NONE", "NONE", rest))
+
+        if new_tempo_bpm:
+            new_tempo_ms_32th = 60000 // (int(new_tempo_bpm)*8)
+            lines.append(create_line('TEMPO', None, 'MS_32TH', new_tempo_ms_32th))
 
         if end == end_time:
             break
