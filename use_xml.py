@@ -113,7 +113,7 @@ def main():
     lines = []
 
     if 0 in tempo_dict:
-        tempo_ms_32th = 60000 // (tempo_dict[0] * 8)
+        tempo_ms_32th = 60000 // (tempo_dict[0] * 16)
         lines.append(create_line('TEMPO', None, 'MS_32TH', tempo_ms_32th))
 
     time_stamps = sorted(hit_dict.keys())
@@ -171,7 +171,7 @@ def main():
                 lines.append(create_line(second_device[0], "NONE", "NONE", rest))
 
         if new_tempo_bpm:
-            new_tempo_ms_32th = 60000 // (int(new_tempo_bpm)*8)
+            new_tempo_ms_32th = 60000 // (int(new_tempo_bpm)*16)
             lines.append(create_line('TEMPO', None, 'MS_32TH', new_tempo_ms_32th))
 
         if end == end_time:
