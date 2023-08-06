@@ -125,6 +125,8 @@ def main():
                 hit_device = second_device
             elif not first_muted and second_muted:
                 hit_device = first_device
+                first_device, second_device = second_device, first_device
+                first_pitch, second_pitch = second_pitch, first_pitch
 
             lines.append(create_line(first_device[0], first_pitch, "NONE",  "NONE"))
             lines.append(create_line(second_device[0], second_pitch, hit_device, length_tag))
@@ -139,7 +141,7 @@ def main():
                 lines.append(create_line(second_device[0], second_pitch, "NONE", length_tag))
 
         for rest in additional_rests:
-                lines.append(create_line(second_device[0], second_pitch, "NONE", rest))
+                lines.append(create_line(second_device[0], "NONE", "NONE", rest))
 
         if end == end_time:
             break

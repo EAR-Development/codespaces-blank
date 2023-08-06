@@ -1,12 +1,16 @@
 from itertools import combinations_with_replacement
 
 LENGTH_LOOKUP = {
-    1: '04TH',
-    2: 'HALF',
-    0.5: '08TH',
-    1.5: '04TH_DOTTED',
+    4.0     : 'FULL',
+    3.0     : 'HALF_DOTTED',
+    2.0     : 'HALF',
+    1.5     : '04TH_DOTTED',
+    1.0     : '04TH',
+    0.75    : '08TH_DOTTED',
+    0.5     : '08TH',
+    0.25    : '16TH',
+    0.125   : '32TH',
 }
-
 def get_length_list(duration: float) -> list[str]:
     found = False
     candidate = []
