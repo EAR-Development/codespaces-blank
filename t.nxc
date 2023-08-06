@@ -1,0 +1,13 @@
+#include "chimes_note_constants.nxc";
+const string filename = "song_tetris.dat";
+byte SONG[][] = {
+   {NOTE_R_C0,   HIT_NONE,    PAUSE_NONE          },
+   {NOTE_L_G-1,  HIT_BOTH,    PAUSE_04TH          },
+   {NOTE_R_D0,   HIT_RIGHT,   PAUSE_04TH          },
+   {NOTE_R_E0,   HIT_NONE,    PAUSE_NONE          },
+   {NOTE_L_A-1,  HIT_BOTH,    PAUSE_04TH          },
+   {NOTE_R_F0,   HIT_RIGHT,   PAUSE_04TH          },
+   {NOTE_R_F0,   HIT_NONE,    PAUSE_HALF          },
+   {NOTE_R_F0,   HIT_NONE,    PAUSE_04TH_DOTTED   },
+};
+#include "chimes_note_writer.nxc";
